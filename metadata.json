@@ -1,0 +1,19 @@
+{
+    "01.jpg": {"category": "animal", "species": "parrot", "color": "green", "type": "bird"},
+    "02.jpg": {"category": "animal", "species": "bird", "color": "grey", "type": "bird"},
+    "03.jpg": {"category": "animal", "species": "kiwi", "color": "brown", "type": "bird"},
+    "04.jpg": {"category": "animal", "species": "goose", "color": "white", "type": "bird"},
+    "05.jpg": {"category": "animal", "species": "cat", "color": "brown", "type": "cat"},
+    "06.jpg": {"category": "animal", "species": "dog", "color": "golden", "type": "dog"},
+    "07.jpg": {"category": "animal", "species": "german_shepherd", "color": "black", "type": "dog"},
+    "101.jpg": {"category": "car", "brand": "BMW", "color": "yellow", "type": "sports"},
+    "102.jpg": {"category": "car", "brand": "BMW", "color": "red", "type": "sports"},
+    "103.jpg": {"category": "car", "brand": "Mercedes", "color": "white", "type": "SUV"},
+    "104.jpg": {"category": "car", "brand": "Mercedes", "color": "black", "type": "sports"},
+    "105.jpg": {"category": "car", "brand": "Audi", "color": "blue", "type": "sedan"},
+    "106.jpg": {"category": "car", "brand": "Audi", "color": "orange", "type": "sports"},
+    "107.jpg": {"category": "car", "brand": "Honda", "color": "black", "type": "sedan"},
+    "108.jpg": {"category": "car", "brand": "Honda", "color": "black", "type": "van"},
+    "109.jpg": {"category": "car", "brand": "Nissan", "color": "white", "type": "van"},
+    "110.jpg": {"category": "car", "brand": "Nissan", "color": "blue", "type": "sports"}
+}
