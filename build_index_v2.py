@@ -4,7 +4,7 @@ import torch
 import os
 import json
 
-# ============ 1. 載入 CLIP ============
+# ============ 1. Load CLIP ============
 print("📥 Loading CLIP model...")
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
@@ -12,7 +12,7 @@ print("✅ CLIP loaded\n")
 
 
 def embed_images(image_paths):
-    """將多張圖片轉做 Embedding"""
+    """Generate embeddings for multiple images."""
     images = [Image.open(p).convert("RGB") for p in image_paths]
     inputs = clip_processor(images=images, return_tensors="pt")
     with torch.no_grad():
@@ -25,7 +25,7 @@ def embed_images(image_paths):
     return embeddings
 
 
-# ============ 2. 載入 Metadata ============
+# ============ 2. Load metadata ============
 metadata_file = "metadata.json"
 if os.path.exists(metadata_file):
     with open(metadata_file, "r", encoding="utf-8") as f:
@@ -45,7 +45,7 @@ print(f"📸 Loading {len(image_paths)} images...")
 image_embeddings = embed_images(image_paths)
 print(f"✅ Loaded all images\n")
 
-# 為每張圖準備 Metadata
+# Prepare metadata for each image.
 image_metadata = []
 for path in image_paths:
     filename = os.path.basename(path)
@@ -54,7 +54,7 @@ for path in image_paths:
     image_metadata.append(meta)
 
 
-# ============ 4. 儲存 Embedding + Metadata ============
+# ============ 4. Save embeddings and metadata ============
 data = {
     "embeddings": image_embeddings,
     "paths": image_paths,

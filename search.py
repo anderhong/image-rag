@@ -4,7 +4,7 @@ from transformers import CLIPProcessor, CLIPModel
 import torch
 import os
 
-# ============ 1. 載入 CLIP ============
+# ============ 1. Load CLIP ============
 print("📥 Loading CLIP model...")
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
@@ -12,7 +12,7 @@ print("✅ CLIP loaded\n")
 
 
 def embed_text(text):
-    """將文字轉做 Embedding"""
+    """Generate an embedding from text."""
     inputs = clip_processor(text=[text], return_tensors="pt", padding=True)
     with torch.no_grad():
         outputs = clip_model.get_text_features(**inputs)
@@ -24,7 +24,7 @@ def embed_text(text):
     return embedding
 
 
-# ============ 2. 載入 Embedding ============
+# ============ 2. Load embeddings ============
 if not os.path.exists("embeddings.pt"):
     print("❌ embeddings.pt not found. Please run build_index.py first.")
     exit(1)
@@ -39,7 +39,7 @@ print(f"   Embedding shape: {image_embeddings.shape}\n")
 
 # ============ 3. Query Phase ============
 def search_by_text(query: str, top_k: int = 5):
-    """用文字搜尋圖片"""
+    """Search images by text."""
     text_embedding = embed_text(query)
     similarities = torch.cosine_similarity(text_embedding, image_embeddings)
     sorted_indices = torch.argsort(similarities, descending=True)[:top_k]

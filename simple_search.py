@@ -3,14 +3,14 @@ from PIL import Image
 import torch
 import os
 
-# ============ 1. 載入 CLIP ============
+# ============ 1. Load CLIP ============
 print("📥 Loading CLIP model...")
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 print("✅ CLIP loaded\n")
 
 def embed_images(image_paths):
-    """將多張圖片轉做 Embedding"""
+    """Generate embeddings for multiple images."""
     images = [Image.open(p).convert("RGB") for p in image_paths]
     inputs = clip_processor(images=images, return_tensors="pt")
     with torch.no_grad():
@@ -24,7 +24,7 @@ def embed_images(image_paths):
 
 
 def embed_text(text):
-    """將文字轉做 Embedding"""
+    """Generate an embedding from text."""
     inputs = clip_processor(text=[text], return_tensors="pt", padding=True)
     with torch.no_grad():
         outputs = clip_model.get_text_features(**inputs)
@@ -48,7 +48,7 @@ print(f"✅ Loaded all images\n")
 
 # ============ 3. Query Phase ============
 def search_by_text(query: str, top_k: int = 5):
-    """用文字搜尋圖片"""
+    """Search images by text."""
     text_embedding = embed_text(query)
     similarities = torch.cosine_similarity(text_embedding, image_embeddings)
     sorted_indices = torch.argsort(similarities, descending=True)[:top_k]

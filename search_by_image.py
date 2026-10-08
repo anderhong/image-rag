@@ -3,7 +3,7 @@ from PIL import Image
 import torch
 import os
 
-# ============ 1. 載入 CLIP ============
+# ============ 1. Load CLIP ============
 print("📥 Loading CLIP model...")
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
@@ -11,7 +11,7 @@ print("✅ CLIP loaded\n")
 
 
 def embed_images(image_paths):
-    """將圖片轉做 Embedding"""
+    """Generate an embedding from an image."""
     images = [Image.open(p).convert("RGB") for p in image_paths]
     inputs = clip_processor(images=images, return_tensors="pt")
     with torch.no_grad():
@@ -24,7 +24,7 @@ def embed_images(image_paths):
     return embeddings
 
 
-# ============ 2. 載入 Embedding + Metadata ============
+# ============ 2. Load embeddings and metadata ============
 if not os.path.exists("embeddings.pt"):
     print("❌ embeddings.pt not found. Please run build_index.py first.")
     exit(1)
@@ -41,23 +41,23 @@ print(f"   Embedding shape: {image_embeddings.shape}\n")
 # ============ 3. Query by Image ============
 def search_by_image(query_image_path: str, top_k: int = 5, filters: dict = None):
     """
-    用一張圖片搵相似圖片
+    Search for similar images using a query image.
     
     Args:
-        query_image_path: Query Image 嘅 Path
-        top_k: 回傳數量
-        filters: Metadata Filter，例如 {"category": "car", "brand": "BMW"}
+        query_image_path: Path to the query image.
+        top_k: Number of results to return.
+        filters: Metadata filters, for example {"category": "car", "brand": "BMW"}.
     """
     # Step 1: Embed Query Image
     query_embedding = embed_images([query_image_path])
     
-    # Step 2: 計 Cosine Similarity
+    # Step 2: Calculate cosine similarity.
     similarities = torch.cosine_similarity(query_embedding, image_embeddings)
     
-    # Step 3: 排序
+    # Step 3: Sort the results.
     sorted_indices = torch.argsort(similarities, descending=True)
     
-    # Step 4: Filter + 收集結果
+    # Step 4: Filter and collect results.
     results = []
     for idx in sorted_indices:
         idx_int = idx.item()
@@ -78,7 +78,7 @@ def search_by_image(query_image_path: str, top_k: int = 5, filters: dict = None)
         if len(results) >= top_k:
             break
     
-    # Step 5: 顯示結果
+    # Step 5: Display the results.
     print(f"🖼️ Query Image: {query_image_path}")
     if filters:
         print(f"   Filters: {filters}")
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         if not user_input:
             continue
         
-        # 解析 Filter 語法
+        # Parse the filter syntax.
         filters = {}
         query_parts = []
         

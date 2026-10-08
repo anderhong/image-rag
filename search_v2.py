@@ -3,7 +3,7 @@ import torch
 import os
 import json
 
-# ============ 1. 載入 CLIP ============
+# ============ 1. Load CLIP ============
 print("📥 Loading CLIP model...")
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
@@ -11,7 +11,7 @@ print("✅ CLIP loaded\n")
 
 
 def embed_text(text):
-    """將文字轉做 Embedding"""
+    """Generate an embedding from text."""
     inputs = clip_processor(text=[text], return_tensors="pt", padding=True)
     with torch.no_grad():
         outputs = clip_model.get_text_features(**inputs)
@@ -23,7 +23,7 @@ def embed_text(text):
     return embedding
 
 
-# ============ 2. 載入 Embedding + Metadata ============
+# ============ 2. Load embeddings and metadata ============
 if not os.path.exists("embeddings.pt"):
     print("❌ embeddings.pt not found. Please run build_index.py first.")
     exit(1)
@@ -40,20 +40,20 @@ print(f"   Embedding shape: {image_embeddings.shape}\n")
 # ============ 3. Query Phase ============
 def search(query: str, top_k: int = 5, filters: dict = None):
     """
-    搜尋圖片
+    Search images.
     
     Args:
         query: Text Query
-        top_k: 回傳數量
-        filters: Metadata Filter，例如 {"category": "car", "color": "red"}
+        top_k: Number of results to return.
+        filters: Metadata filters, for example {"category": "car", "color": "red"}.
     """
     text_embedding = embed_text(query)
     similarities = torch.cosine_similarity(text_embedding, image_embeddings)
     
-    # 排序
+    # Sort the results.
     sorted_indices = torch.argsort(similarities, descending=True)
     
-    # Filter + 收集結果
+    # Filter and collect results.
     results = []
     for idx in sorted_indices:
         idx_int = idx.item()
@@ -74,7 +74,7 @@ def search(query: str, top_k: int = 5, filters: dict = None):
         if len(results) >= top_k:
             break
     
-    # 顯示結果
+    # Display the results.
     print(f"🔍 Query: '{query}'")
     if filters:
         print(f"   Filters: {filters}")
@@ -116,13 +116,13 @@ if __name__ == "__main__":
         if not user_input:
             continue
         
-        # 解析 Filter 語法：filter:key=value
+        # Parse the filter syntax: filter:key=value.
         filters = {}
         query_parts = []
         
         for token in user_input.split():
             if token.startswith("filter:"):
-                # 解析 filter:category=car
+                # Parse filter:category=car.
                 filter_str = token.replace("filter:", "")
                 if "=" in filter_str:
                     key, value = filter_str.split("=", 1)

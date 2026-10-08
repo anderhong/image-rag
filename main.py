@@ -6,20 +6,20 @@ import torch
 import os
 import io
 
-# ============ 1. 建立 FastAPI App ============
+# ============ 1. Create the FastAPI application ============
 app = FastAPI(
     title="Image RAG API",
     description="Text -> Image & Image -> Image Search using CLIP",
     version="1.0.0"
 )
 
-# ============ 2. 載入 CLIP + Embeddings ============
+# ============ 2. Load CLIP and embeddings ============
 print("Loading CLIP model...")
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 print("CLIP loaded")
 
-# 載入 Embeddings
+# Load embeddings.
 if not os.path.exists("embeddings.pt"):
     raise RuntimeError("embeddings.pt not found. Run build_index.py first.")
 
@@ -102,7 +102,7 @@ def root():
 
 @app.post("/search/text")
 def search_by_text(request: TextSearchRequest):
-    """用文字搜尋圖片"""
+    """Search images by text."""
     try:
         query_embedding = embed_text(request.query)
         results = search_by_embedding(
@@ -122,7 +122,7 @@ def search_by_text(request: TextSearchRequest):
 
 @app.post("/search/image")
 async def search_by_image(file: UploadFile = File(...), top_k: int = 5):
-    """用圖片搜尋圖片"""
+    """Search images by image."""
     try:
         contents = await file.read()
         image = Image.open(io.BytesIO(contents)).convert("RGB")
@@ -139,7 +139,7 @@ async def search_by_image(file: UploadFile = File(...), top_k: int = 5):
 
 @app.get("/images")
 def list_images():
-    """列出所有 Index 咗嘅圖"""
+    """List all indexed images."""
     return {
         "total": len(image_paths),
         "images": [
